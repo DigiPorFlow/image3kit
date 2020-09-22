@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import scikit_build_example as m
+import image3kit as m
 
 
 def test_version():

@@ -1,4 +1,4 @@
-# scikit_build_example
+# image3kit
 
 # License
 
