@@ -1,0 +1,14 @@
+.PHONY: setup-ide clean
+
+
+setup-ide:
+	python3 -m venv .venv
+	./.venv/bin/pip install cmake pybind11 pre-commit
+	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -Dpybind11_DIR=$(shell ./.venv/bin/python -m pybind11 --cmakedir)
+	ln -sf build/compile_commands.json .
+
+clean:
+	rm -rf build compile_commands.json
+
+pre-commit:
+	pre-commit run -a

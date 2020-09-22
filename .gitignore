@@ -1,0 +1,20 @@
+# Using https://github.com/github/gitignore/blob/master/Python.gitignore
+
+# clangd
+compile_commands.json
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+build/
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# Cache directories
+.cache/
+*_cache/
