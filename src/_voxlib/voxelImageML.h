@@ -1377,6 +1377,78 @@ void  multiSegment2(voxelImageT<T>& vImg, vars<int> trshlds, vars<int> minSizs, 
 
   cout<<"."<<endl;;
 }
+
+
+template<typename T>  bool segment2(voxelImageT<T>& vImg, int nSegs, vars<int> th, vars<int> minSizs,
+double noisev, double localF, double flatnes, double resolution, double gradFactor, int krnl, int nItrs, int writedumps
+) {
+  cout<<"{ \n  segmenting";
+  ensure( flatnes<0.9, "too large flatnes, set to ~0.1",2);  ensure( gradFactor<10.1, "too large gradFactor, set to ~0.1",2);
+  ensure( localF<0.1, "localF should be < 0.1");          ensure( nItrs>5, "nItrs should be > 5 ");
+  ensure( krnl,"wrong kernel  in segment2",-1);
+  resolution=max(resolution,1.);
+  if (th.empty()) th = vars<int>(nSegs + 1, -1);
+  if (minSizs.empty()) { minSizs = vars<int>(nSegs, 2); minSizs[0] = 1; }
+
+  (cout<<", nSegs: "<<nSegs).flush();
+  cout<<", ranges: "<<th <<",  minSizs (nshrink): "<<minSizs<<endl;
+  cout<<"  Noise(x): "<<noisev<<"  "<<localF<<",  krnl: "<<krnl<<",  flatnes: "<<flatnes<<",  diffuseL: "<<resolution<<",  gradFactor: "<<gradFactor<<":"<<endl;
+  if (writedumps) cout<<"\n  **** writingdumps **** \n"<<endl;
+
+  constexpr int i254 = maxT(T)-1;
+  constexpr int i1=minT(T)+1;
+  if(th[0]<i1)        { th[0]=i1;       forAllvp_(vImg)  if(*vp<i1)  *vp=i1;  }
+  ensure( th[nSegs]<=maxT(T), "incompatible threshold value and image type", -1);
+  if(th[nSegs]>i254)  { th[nSegs]=i254; forAllvp_(vImg)  if (*vp>i254) *vp=i254;  }
+
+
+  if(th[0]<0)
+  {
+    cout<<" trying to figure out threshold (outdated) "<<endl;
+
+    dbls hist(maxT(T),0.);
+    {
+      cout<<"  calculating histogram: ";
+      voxelImageT<T> voxls = vImg;
+      //bilateralGauss(voxls, 2, noisev, 0.00, (resolution+1.), 1,254);
+      voxls = median(median(median(median(median(vImg)))));
+      //voxls.write("dumpmedian.mhd");
+      voxelImageT<T> grad=magGradient(voxls, resolution);
+      //grad.write("dumpGrad5.mhd");
+      array<double,5> otst = otsu_th(grad,0,maxT(T)-1);
+
+      forAlliii_seq(vImg)
+      {  int vv = vImg(iii);
+        if (0<vv && vv<maxT(T))  hist[vv]+=1./(max(grad(iii)-otst[1],0.)+0.1*otst[2]);
+      }
+      forAllvv_seq(voxls)  { if (1<=vv && vv<maxT(T)) { hist[vv]+=1.; } }
+    }
+
+    if(nSegs>2)
+    {  th[0]=1; th[nSegs]=maxT(T)-1;
+      for_i_(1,nSegs)  if(th[i]<=0)  th[i]=th[i-1]+(i254-th[i-1])/(nSegs-i);
+      cout<<"  Ges ranges: " <<th<<endl;
+      for_i_(0,10)
+      {
+        for_i_(1,nSegs)  th[i] = otsu_th(hist,th[i-1],th[i+1])[2]+0.5;
+        cout<<"  New ranges: "  <<th<<endl;
+      }
+    }
+    else
+    {  th[0]=1; th[nSegs]=i254;
+      th[1] = otsu_th(hist,th[0],th[2])[2]+0.5;
+      cout<<"  New ranges: " <<th<<endl;
+    }
+  }
+
+  vImg.growBox(8);
+  multiSegment2(vImg, th, minSizs, sqr(resolution), noisev, localF, krnl, flatnes, gradFactor, nItrs, writedumps);
+  vImg.shrinkBox(8);
+
+  cout<<"}"<<endl;
+  return true;
+}
+
     /*{//     //voxelImageT<T> avgimg = meanimg;
      //forAllkji_m_(1,origimg)
      //{

@@ -159,9 +159,9 @@ template<typename T>   void voxelField<T>::reset(int3 nnn)  {
 }
 
 template<typename T>   void voxelField<T>::reset(int3 nnn, T value)  {
-  nij_=size_t(nnn.x)*nnn.y;
-  this->data_.resize(size_t(nnn.z)*nij_+128,value); // 128 extra memory for readRLE, sync: XADSDAS
-  this->data_.resize(size_t(nnn.z)*nij_,value);
+  nij_=size_t(std::max(0,nnn.x))*std::max(0,nnn.y);
+  this->data_.resize(size_t(std::max(0,nnn.z))*nij_+128,value); // 128 extra memory for readRLE, sync: XADSDAS
+  this->data_.resize(size_t(std::max(0,nnn.z))*nij_,value);
   nnn_=nnn;
 }
 
@@ -1414,7 +1414,7 @@ void voxelImageT<T>::threshold101(T Bgn,T  End)  {
 }
 
 template<typename T,  enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-void rescale(voxelImageT<T>& img, T newMin,T  newMax)  {
+void rescaleValues(voxelImageT<T>& img, T newMin,T  newMax)  {
   T vmin = std::numeric_limits<T>::max();
   T vmax = std::numeric_limits<T>::min();
   int deltaT = newMax - newMin;
@@ -1837,5 +1837,47 @@ operat( voxelImageT<T>& vImg, char opr, std::string img2Nam, std::stringstream &
    }
   }
 
+  return 0;
+}
+
+
+
+template<typename T> bool _write8bit(voxelImageT<T>& vImg, std::string outName, double minv, double maxv)  {
+  if (maxv<=minv)  {
+    T mxl = 0;
+    OMPragma("omp parallel for reduction(max:mxl)")
+    forAllcp(vImg) if(*cp>=0) mxl = std::max(mxl,*cp);
+    if (double(mxl)<255.5) maxv=255.;
+  }
+  double delv=255.499999999/(maxv-minv);
+  (std::cout<<minv<<" "<<maxv).flush();
+  voxelImageT<unsigned char> voxels(vImg.size3(),vImg.dx(),vImg.X0(),255);
+  forAlliii_(voxels) voxels(iii)=std::max(0,std::min(255,int(delv*(vImg(iii)-minv))));
+  voxels.write(outName);
+  (std::cout<<".").flush();
+  return 0;
+}
+
+
+// outdated ?
+template<typename T> bool _delense032(voxelImageT<T>& vImg, int nItrs, int nAdj0,  int nAdj1,    Tint lbl0, Tint lbl1)  {
+  (std::cout<<"{ "<<" delense032 nItrs:"<<nItrs<<"; lbls: "<<lbl0<<" "<<lbl1<< "; nAdjThresholds: "<<nAdj0<<" "<<nAdj1<<";  ").flush();
+
+  vImg.growBox(2); std::cout<<std::endl;
+  voxelImageT<T> vimgo=vImg;
+  for (int i=0; i<nItrs; ++i)   vImg.PointMedian032(25,nAdj1,lbl0,lbl1);
+  FaceMedGrowToFrom(vImg,T(lbl1),T(lbl0),1);
+  FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
+  for (int i=0; i<2*nItrs; ++i) { vImg.PointMedian032(nAdj0,25,lbl0,lbl1);  FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1); }
+  FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-3);
+  FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
+  FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
+
+  FaceMedGrowToFrom(vimgo,T(lbl1),T(lbl0),2);//41 51 -> lbl1
+  FaceMedGrowToFrom(vimgo,T(lbl1),T(lbl0),2);//41 51 -> lbl1
+  forAlliii_(vimgo) if(vimgo(iii)==lbl1) vImg(iii)=lbl1;
+  vImg.shrinkBox(2);
+
+  (std::cout<<"};\n").flush();
   return 0;
 }

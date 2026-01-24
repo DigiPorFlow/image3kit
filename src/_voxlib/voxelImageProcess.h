@@ -675,90 +675,20 @@ template<typename T>  bool segment( stringstream& ins, voxelImageT<T>& vImg)  {
 }
 
 
-
 template<typename T>  bool segment2( stringstream& ins, voxelImageT<T>& vImg)  {
   KeyHint("nSegs(3) t_i(1 60 128 254) minSizs(1 2 2)  "
             " noisev(2) localF(0.5) flatnes(0.01)  resolution(2) nItrs(13) writedumps(0)");
 
-  cout<<"{ \n  segmenting";
+  int nSegs(2);  ins >> nSegs ;
 
-  constexpr int i254 = maxT(T)-1;
-
-  int nSegs(2);
-  ins >> nSegs ; (cout<<", nSegs: "<<nSegs).flush();
-
-  vars<int> th(nSegs+1,-1); //- thresholds.   using vars<T> does not read ascii as number
-  vars<int> minSizs(nSegs, 2);  minSizs[0]=1;   //NOT USED
-
-  ins>> th;   cout<<", ranges: "<<th;
-  ins>> minSizs;   cout<<",  minSizs (nshrink): "<<minSizs<<endl;
+  vars<int> th;  ins >> th;//- thresholds.  NB! using vars<T> does not read ascii as number
+  vars<int> minSizs;  ins >> minSizs;   //NOT USED
 
   double noisev(2.),localF(800), flatnes(0.1), resolution(2), gradFactor(0); int krnl(2), nItrs(13), writedumps(0);
-  ensure( krnl,"wrong kernel  in segment2",-1);
   ins >> noisev >>localF >> krnl >> flatnes >> resolution >> gradFactor>> nItrs >> writedumps;
-                    ensure( flatnes<0.9, "too large flatnes, set to ~0.1",2);    ensure( gradFactor<10.1, "too large gradFactor, set to ~0.1",2);
-                    ensure( localF<0.1, "localF should be < 0.1");            ensure( nItrs>5, "nItrs should be > 5 ");
-  resolution=max(resolution,1.);
-  cout<<"  Noise(x): "<<noisev<<"  "<<localF<<",  krnl: "<<krnl<<",  flatnes: "<<flatnes<<",  diffuseL: "<<resolution<<",  gradFactor: "<<gradFactor<<":"<<endl;
-  if (writedumps) cout<<"\n  **** writingdumps **** \n"<<endl;
 
-
-  constexpr int i1=minT(T)+1;
-  if(th[0]<i1)        { th[0]=i1;       forAllvp_(vImg)  if(*vp<i1)  *vp=i1;  }
-  ensure( th[nSegs]<=maxT(T), "incompatible threshold value and image type", -1);
-  if(th[nSegs]>i254)  { th[nSegs]=i254; forAllvp_(vImg)  if (*vp>i254) *vp=i254;  }
-
-
-  if(th[0]<0)
-  {
-    cout<<" trying to figure out threshold (outdated) "<<endl;
-
-    dbls hist(maxT(T),0.);
-    {
-      cout<<"  calculating histogram: ";
-      voxelImageT<T> voxls = vImg;
-      //bilateralGauss(voxls, 2, noisev, 0.00, (resolution+1.), 1,254);
-      voxls = median(median(median(median(median(vImg)))));
-      //voxls.write("dumpmedian.mhd");
-      voxelImageT<T> grad=magGradient(voxls, resolution);
-      //grad.write("dumpGrad5.mhd");
-      array<double,5> otst = otsu_th(grad,0,maxT(T)-1);
-
-      forAlliii_seq(vImg)
-      {  int vv = vImg(iii);
-        if (0<vv && vv<maxT(T))  hist[vv]+=1./(max(grad(iii)-otst[1],0.)+0.1*otst[2]);
-      }
-      forAllvv_seq(voxls)  { if (1<=vv && vv<maxT(T)) { hist[vv]+=1.; } }
-    }
-
-
-
-    if(nSegs>2)
-    {  th[0]=1; th[nSegs]=maxT(T)-1;
-      for_i_(1,nSegs)  if(th[i]<=0)  th[i]=th[i-1]+(i254-th[i-1])/(nSegs-i);
-      cout<<"  Ges ranges: " <<th<<endl;
-      for_i_(0,10)
-      {
-        for_i_(1,nSegs)  th[i] = otsu_th(hist,th[i-1],th[i+1])[2]+0.5;
-        cout<<"  New ranges: "  <<th<<endl;
-      }
-    }
-    else
-    {  th[0]=1; th[nSegs]=i254;
-      th[1] = otsu_th(hist,th[0],th[2])[2]+0.5;
-      cout<<"  New ranges: " <<th<<endl;
-    }
-  }
-
-
-  vImg.growBox(8);
-  multiSegment2(vImg, th, minSizs, sqr(resolution), noisev, localF, krnl, flatnes, gradFactor, nItrs, writedumps);
-  vImg.shrinkBox(8);
-
-  cout<<"}"<<endl;
-  return true;
+  return segment2(vImg, nSegs, th, minSizs, noisev, localF, flatnes, resolution, gradFactor, krnl, nItrs, writedumps);
 }
-
 
 template<typename T>  bool cutOutside( stringstream& ins, voxelImageT<T>& vImg)  {
   KeyHint("dir(z) nExtraOut(0) threshold outVal(-1) nShiftX(0) nShiftY(0) cutHighs(0)\n// automatically remove voxels on the outside of cylindrical samples");

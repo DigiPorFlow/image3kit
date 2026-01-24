@@ -1,3 +1,4 @@
+#pragma once
 
 #include "stb_image_write.h"
 #include "IOUtils.h"
@@ -14,7 +15,7 @@
 //inline void setRGB(png_byte *ptr, T val, T bgnv, T endv)
 //{
   //int v = (int(val-bgnv) * 767)/(endv-bgnv);  // = f*767
-  //if (v < 0) v = 0;
+  //if (v < 0) v = 0;w
   //if (v > 767) v = 767;
   //int offset = v % 256;
 
