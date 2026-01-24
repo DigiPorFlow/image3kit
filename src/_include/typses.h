@@ -197,6 +197,7 @@ struct piece  {
 	T& operator[](sizt i)const { return d[i]; }
 	//const T& operator [](sizt i) const { return d[i]; }
 	size_t   size()     const { return dn-d; }
+	bool     empty()    const { return dn<=d; }
 	size_t   capacity() const { return dn-d; }
 	T*       data()           { return d; }
 	const T* data()     const { return d; }

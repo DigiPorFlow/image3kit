@@ -206,7 +206,7 @@ class voxelImageT: public voxelImageTBase, public voxelField<T>  {
 	void erodeLayer(int i);
 	void rotate(char direction);
 	void PointMedian032(int nAdj0, int nAdj1, T lbl0, T lbl1);
-	void FaceMedian06(int nAdj0, int nAdj1, T lbl0, T lbl1);
+	// void FaceMedian06(int nAdj0, int nAdj1, T lbl0, T lbl1);
 	size_t FaceMedian06(int nAdj0,int nAdj1); // obsolete
 	void zeroGrad(int nlyr);
 
@@ -262,7 +262,7 @@ class voxelImageT: public voxelImageTBase, public voxelField<T>  {
 //template<typename T> void circleOut(voxelImageT<T>& vImage, int X0,int Y0,int R, char dir = 'z', T outVal=std::numeric_limits<T>::max())//  TODO to be tested
 //template<typename T> voxelImageT<T> median(const voxelImageT<T>& vImage)
 //template<typename T> void replaceRange(voxelImageT<T>& vImage, T minvi, T  maxvi, T midvi)
-//template<typename T> void rescale(voxelImageT<T>& img, T theresholdMin,T  theresholdMax)
+//template<typename T> void rescaleValues(voxelImageT<T>& img, T theresholdMin,T  theresholdMax)
 //template<typename T> long long modeNSames(voxelImageT<T>& vImage, const short nSameNei, bool verbose=false)
 //template<typename T> void FaceMedGrowToFrom(voxelImageT<T>& vImg, T lbl0, T lbl1, int ndif=0)
 //template<typename T> voxelImageT<T> resampleMax(const voxelImageT<T>& img, double nReSampleNotSafe)//  TODO to be tested

@@ -34,7 +34,7 @@ template<typename T> bool fillHoles( stringstream& ins, voxelImageT<T>& vImg)  {
 	cout<<"  fillHoles: eliminating isolated rocks/pores; maxHoleSize:" <<maxHoleSize<<" (default is 2) "<<endl;
 	vImg.fillHoles(maxHoleSize);
 
-	vImg.FaceMedian06(1,5);
+	// vImg.FaceMedian06(1,5);
 	//vImg.FaceMedian07(2,5);
 	//vImg.FaceMedian07(2,5);
 	return 0;
@@ -67,7 +67,7 @@ bool rescale( stringstream& ins, voxelImageT<T>& vImg)  {
 	ins>>thresholdMax;
 
 	(cout<<thresholdMin<<", "<<thresholdMax<<" ]    ").flush();
-	rescale(vImg,T(thresholdMin),T(thresholdMax));
+	rescaleValues(vImg,T(thresholdMin),T(thresholdMax));
 	(cout<<".").flush();
 	return 0;
 }
@@ -198,22 +198,9 @@ template<typename T> bool write( stringstream& ins, voxelImageT<T>& vImg)  {
 template<typename T> bool write8bit( stringstream& ins, voxelImageT<T>& vImg)  {
 	KeyHint("outputImageName_8bit.raw/mhd/tif/am/.raw.gz");
 	string outName("dump.tif");     ins >> outName;
-	double minv=-0.5, maxv=maxT(T);
-
-	{	T mxl = 0;
-		OMPragma("omp parallel for reduction(max:mxl)")
-		forAllcp(vImg) if(*cp>=0) mxl = max(mxl,*cp);
-		if (double(mxl)<255.5) maxv=255.;
-	}
-
-	ins>>minv>>maxv;
-	double delv=255.499999999/(maxv-minv);
-	(cout<<minv<<" "<<maxv).flush();
-	voxelImageT<unsigned char> voxels(vImg.size3(),vImg.dx(),vImg.X0(),255);
-	forAlliii_(voxels) voxels(iii)=std::max(0,std::min(255,int(delv*(vImg(iii)-minv))));
-	voxels.write(outName);
-	(cout<<".").flush();
-	return 0;
+	double minv = -0.5;             ins >> minv;
+	double maxv = minv-0.5;         ins >> maxv;
+	return _write8bit(vImg, outName, minv, maxv);
 }
 
 template<typename T> bool read( stringstream& ins, voxelImageT<T>& vImg)  {
@@ -324,25 +311,7 @@ template<typename T> bool delense032( stringstream& ins, voxelImageT<T>& vImg)  
 	KeyHint("nItrs(2) lbl0(0) lbl1(1) nAdj0(10) nAdj1(6)");
 	int nItrs(2),  nAdj0(10),  nAdj1(6);    Tint lbl0(0), lbl1(1);
 	ins >> nItrs >> lbl0 >> lbl1 >> nAdj0 >> nAdj1;
-	(cout<<"{ "<<" nItrs:"<<nItrs<<"; lbls: "<<lbl0<<" "<<lbl1<< "; nAdjThresholds: "<<nAdj0<<" "<<nAdj1<<";  ").flush();
-
-	vImg.growBox(2); cout<<endl;
-	voxelImageT<T> vimgo=vImg;
-	for (int i=0; i<nItrs; ++i)   vImg.PointMedian032(25,nAdj1,lbl0,lbl1);
-	FaceMedGrowToFrom(vImg,T(lbl1),T(lbl0),1);
-	FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
-	for (int i=0; i<2*nItrs; ++i) { vImg.PointMedian032(nAdj0,25,lbl0,lbl1);	FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1); }
-	FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-3);
-	FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
-	FaceMedGrowToFrom(vImg,T(lbl0),T(lbl1),-1);
-
-	FaceMedGrowToFrom(vimgo,T(lbl1),T(lbl0),2);//41 51 -> lbl1
-	FaceMedGrowToFrom(vimgo,T(lbl1),T(lbl0),2);//41 51 -> lbl1
-	forAlliii_(vimgo) if(vimgo(iii)==lbl1) vImg(iii)=lbl1;
-	vImg.shrinkBox(2);
-
-	(cout<<"};\n").flush();
-	return 0;
+	return _delense032(vImg, nItrs, nAdj0,  nAdj1, lbl0, lbl1);
 }
 
 
