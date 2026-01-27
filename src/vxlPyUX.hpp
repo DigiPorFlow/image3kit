@@ -67,6 +67,9 @@ py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
 .def("sliceToPng"    , [&](voxelImageT<VxTyp> &m, const string& normalAxis, const string& fnam, int iSlice, int bgnv, int endv, const string& color) {
     ::sliceToPng(m, normalAxis, fnam, iSlice, bgnv, endv, color);
     }, py::arg("normalAxis"), py::arg("filename"), py::arg("sliceIndex"), py::arg("val_min"), py::arg("val_max"), py::arg("color_map")="gray", "Save a 2D slice as a PNG image.")
+.def("sliceFromPng"    , [&](voxelImageT<VxTyp> &m, const string& normalAxis, const string& fnam, int iSlice, int bgnv, int endv) {
+    ::sliceFromPng(m, normalAxis, fnam, iSlice, bgnv, endv);
+    }, py::arg("normalAxis"), py::arg("filename"), py::arg("sliceIndex"), py::arg("val_min"), py::arg("val_max"), "Read a slice from a Png image")
 // Member functions and wrappers
 .def("rescaleValues", [](voxelImageT<VxTyp> &m, VxTyp min, VxTyp max) { rescaleValues(m, min, max); }, py::arg("min"), py::arg("max"), "Rescale image values to [min, max].")
 .def("setOffset", [](voxelImageT<VxTyp> &m, dbl3 off) { m.X0Ch() = off; }, py::arg("offset"), "Set the spatial offset (origin).")

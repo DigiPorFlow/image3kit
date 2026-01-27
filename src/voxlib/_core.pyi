@@ -15,7 +15,7 @@ import collections.abc
 import numpy
 import numpy.typing
 import typing
-__all__: list[str] = ['Input', 'VxlImgU8', 'cube', 'cylinder', 'dbl3', 'int3', 'readImage', 'shape', 'sphere', 'voxelImageTBase']
+__all__: list[str] = ['Input', 'VxlImgU8', 'cube', 'cylinder', 'dbl3', 'int3', 'readImage', 'readImageU8', 'shape', 'sphere', 'voxelImageTBase']
 class Input:
     def __init__(self, arg0: dict) -> None:
         ...
@@ -115,6 +115,10 @@ class VxlImgU8:
     def direction(self, arg0: str) -> None:
         """
         Get direction?
+        """
+    def distMapExtrude(self, distMapDict: dict) -> None:
+        """
+        Extrude proportional to distance map.
         """
     def faceMedNgrowToFrom(self, labelTo: typing.SupportsInt, labelFrom: typing.SupportsInt, nDiff: typing.SupportsInt) -> None:
         """
@@ -232,6 +236,10 @@ class VxlImgU8:
         """
         Shrink the image boundaries.
         """
+    def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
+        """
+        Read a slice from a Png image
+        """
     def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt, color_map: str = 'gray') -> None:
         """
         Save a 2D slice as a PNG image.
@@ -336,5 +344,9 @@ class voxelImageTBase:
 def readImage(filename: str, processKeys: typing.SupportsInt = 1) -> voxelImageTBase:
     """
     Global helper to read an image from a file.
+    """
+def readImageU8(dict: dict) -> VxlImgU8:
+    """
+    Global helper to read an uint8 (3D) image from a file.
     """
 __version__: str = '0.0.1'

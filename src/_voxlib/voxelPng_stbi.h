@@ -1,7 +1,14 @@
 #pragma once
 
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <stdint.h>
+
 #include "stb_image_write.h"
+#include "stb_image.h"
 #include "IOUtils.h"
+#include "globals.h"
 
 #include "typses.h"
 #include "voxelImage.h"
@@ -202,6 +209,62 @@ int slice2GrayPng(const voxelImageT<T>& vImage, char axis, std::string fnam, int
  	stbi_write_png(fnam.c_str(), width, height, CHANNEL_NUM, pixels, width * CHANNEL_NUM);
  	delete[] pixels;
 
+	return code;
+}
+
+
+template <typename T>
+int sliceFromPng(voxelImageT<T>& vImage, std::string normalAxis, std::string fnam, int iSlice, int bgnv, int endv){
+	// currently only supports 8bit int (?)
+
+	std::cout<<"Reading "<<fnam<<" \n";
+	char axis = tolower(normalAxis[0]);
+	int iDir=axis-'x'; iDir%=3;
+	int code = 0;
+
+	int width, height, channels;
+	// force 1 channel (grayscale)
+	unsigned char *data = stbi_load(fnam.c_str(), &width, &height, &channels, 1);
+	ensure(data, "Could not load file " + fnam, -1);
+
+	if (vImage.nz()==0) {
+		vImage.reset(int3(width, height, 1), 255);
+	}
+
+	auto nnn=vImage.size3();
+	int exp_w=0, exp_h=0;
+	switch (axis) {
+		case 'x':  exp_w=nnn[2]; exp_h=nnn[1]; ensure(iSlice<nnn[0]," i_slice ?<"+_s(nnn[0]),2);  break;
+		case 'y':  exp_w=nnn[0]; exp_h=nnn[2]; ensure(iSlice<nnn[1]," i_slice ?<"+_s(nnn[1]),2);  break;
+		case 'z':  exp_w=nnn[0]; exp_h=nnn[1]; ensure(iSlice<nnn[2]," i_slice ?<"+_s(nnn[2]),2);  break;
+	}
+
+	double hFact=1., wFact=1;
+	if (width != exp_w || height != exp_h) {
+		// stbi_image_free(data);
+		ensure(false, "Dimension mismatch: " + _s(width) + "x" + _s(height) + " vs " + _s(exp_w) + "x" + _s(exp_h) + ", using linear transformation");
+		wFact = exp_w/double(width);
+		hFact = exp_h/double(height);
+	}
+
+	double invZ = (double(endv)-bgnv)/255.0;
+	for (int y=0 ; y<exp_h ; y++) {
+		for (int x=0 ; x<exp_w ; x++)
+		{
+			size_t ind=0;
+			switch (axis) {
+				case 'x': ind=vImage.index(iSlice,y,x);  break;
+				case 'y': ind=vImage.index(x,iSlice,y);  break;
+				case 'z': ind=vImage.index(x,y,iSlice);  break;
+			}
+
+			size_t ix = std::min(int(x * wFact+0.5), width-1);
+			size_t iy = std::min(int(y * hFact+0.5), height-1);
+			vImage(ind) = (T)(data[iy*width+ix]*invZ + bgnv);
+		}
+	}
+
+	stbi_image_free(data);
 	return code;
 }
 

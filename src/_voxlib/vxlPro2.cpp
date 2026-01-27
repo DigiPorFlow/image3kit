@@ -1,6 +1,7 @@
  #define _noAddFuncs
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
  #include "vxlPro1.cpp"
 
 								namespace MCTProcessing _begins_
