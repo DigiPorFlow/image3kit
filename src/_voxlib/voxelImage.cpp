@@ -18,6 +18,7 @@ your option) any later version. see <http://www.gnu.org/licenses/>.
 #include "voxelImage.h"
 #include "voxelImageI.h"
 #include "voxelEndian.h"
+#include "voxelPng_stbi.h"
 
 #ifdef _WBASM // work around CLang bugs complaining about undefined function
 #include "vxlPro1.cpp"
@@ -293,6 +294,13 @@ std::unique_ptr<voxelImageTBase> readImage(string hdrNam,  int procesKeys)  {
   //! read or create image
   using namespace std;
   (cout<<"voxelImage \""<<hdrNam<<"\": ").flush();
+
+  if (hasExt(hdrNam, ".png")) { // grey-scale atm
+    voxelImage VImage;
+    sliceFromPng(VImage, "z", hdrNam, 0, 0,255);
+    return make_unique<voxelImageT<unsigned char>>(std::move(VImage));
+  }
+
   if (hasExt(hdrNam,".am")) {
     string vtype = getAmiraDataType(hdrNam);
     cout<<"reading '"<<vtype<<"'s from .am file"<<endl;
