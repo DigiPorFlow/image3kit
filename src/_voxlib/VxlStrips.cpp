@@ -1,13 +1,15 @@
 
 #include "VxlStrips.h"
+#include "globals.h"
 #include "voxelImageI.h"
+
 #include <iostream>
 
 using namespace std;
 
 
 VxlStrips::VxlStrips(const InputFile& inp, bool verbose)
-		: InputFile(inp, inp.name()), nx(0), ny(0), nz(0), vxlSize(1), X0(0.,0.,0.)
+		: nx(0), ny(0), nz(0), vxlSize(1), X0(0.,0.,0.)
 	{
 		_1ExtraSegX = !inp.getOr("oldAlg", true);
 
@@ -15,24 +17,24 @@ VxlStrips::VxlStrips(const InputFile& inp, bool verbose)
 	(cout<< "InputData: ").flush();
 	inp.echoKeywords(std::cout);
 
-	srand(1001);
+	std::srand(1001);
 
-	if (!giv("DefaultImageFormat", imgfrmt)) imgfrmt=".raw.gz";
+	if (!inp.giv("DefaultImageFormat", imgfrmt)) imgfrmt=".raw.gz";
 	if(imgfrmt[0]!='.') imgfrmt="."+imgfrmt;
 	imgExt(imgfrmt);
 	cout<<" DefaultImageFormat: "<<imgfrmt<<endl;
 
-	nBP6 = this->getOr("multiDir",true) ? 6 : 2;
-	this->giv("nOpenSides",nBP6);
+	nBP6 = inp.getOr("multiDir",true) ? 6 : 2;
+	inp.giv("nOpenSides",nBP6);
 
 	cout<<" voxel indices:"<<endl;
 	rockTypes_.push_back({0,0});
-	giv("void_range", rockTypes_.back());
+	inp.giv("void_range", rockTypes_.back());
 	cout<<"  "<<0<<": void voxels "<<endl;
 
 	istringstream iss;
 
-	if(giv("porousRanges", iss))  { // DAR_0:
+	if(inp.giv("porousRanges", iss))  { // DAR_0:
 		int2 rng{int(rockTypes_.size()),int(rockTypes_.size())};
 		while(iss>>rng)  {
 			int vi=rockTypes_.size();
@@ -57,17 +59,7 @@ VxlStrips::VxlStrips(const InputFile& inp, bool verbose)
 }
 
 
-void VxlStrips::readImage() {
-
-
-	string fnam(fileName());
-	if(fnam.empty()) { giv("ElementDataFile",fnam) || giv("read",fnam); }
-	cout<<" Image file: "<<fnam<<endl;
-
-	readConvertFromHeader(VImage,fnam);
-
-	const string& vxlkys=kwrd("VxlPro");
-	if(vxlkys.size())  vxlProcess(vxlkys,VImage,"MSE:VxlPro");
+void VxlStrips::setImageInfo(const InputFile& inp, const voxelImage& VImage) {
 
 	vxlSize = VImage.dx().x;
 	ensure(vxlSize>1e-18 || vxlSize<1e18, "bad voxel size",-54754);
@@ -81,13 +73,13 @@ void VxlStrips::readImage() {
 	cout<<" size: "<<VImage.size3()<<", vxlSize: "<<vxlSize<<", X0: "<<X0<<endl;
 
 	int2 outrange;
-	if(giv("outside_range", outrange))  {
+	if(inp.giv("outside_range", outrange))  {
 		forAllcp(VImage) if(outrange.a<=(*cp) && (*cp)<=outrange.b) --nInside;
 		cout<<" outside_range: "<<outrange<<"; inside_fraction: "<<nInside/(double(nx)*ny*nz)<<endl;
 	}
 }
 
-void VxlStrips::createStripsX() {
+void VxlStrips::createStripsX(const voxelImage& VImage) {
 
 	nVxlVs.resize(rockTypes_.size()+1,0);
 	segXs_.resize(nz+2); for(auto& ss:segXs_) ss.resize(ny+2);
@@ -159,14 +151,14 @@ voxelImage segToVxlMesh(const VxlStrips & ref)  {/// converts strips back to vox
 
 
 
-DistMap::DistMap(VxlStrips& cfg, size_t ivVal)//, double vmvLimRelF, double crossAreaf
+DistMap::DistMap(const InputFile& inp, VxlStrips& cfg, size_t ivVal)//, double vmvLimRelF, double crossAreaf
 	: inVxVal_(ivVal)
-	, cg_(cfg), segXs_(cfg.segXs_)
+	, segXs_(cfg.segXs_)
 {
 	_nRSmoothing=3;
 	_clipROutx=0.05;
 	_clipROutyz=0.98;
-	if(cg_.nBP6==6)	 _clipROutyz=_clipROutx;
+	if(cfg.nBP6==6)	 _clipROutyz=_clipROutx;
 
 	if(inVxVal_) // DAR_1:
 	{
@@ -176,7 +168,7 @@ DistMap::DistMap(VxlStrips& cfg, size_t ivVal)//, double vmvLimRelF, double cros
 
 
 	if (std::istringstream iss;
-	    cg_.giv("DistMapSettings"+_s(inVxVal_), iss) || cg_.giv("DistMapSettings", iss)
+	    inp.giv("DistMapSettings"+_s(inVxVal_), iss) || inp.giv("DistMapSettings", iss)
 	   ) iss >>_clipROutx >>_clipROutyz >> _nRSmoothing;
 	cout<<"#!          clipROut.x   .yz, nRSmoothing:"<<endl;
 	cout<<"DistMapSettings:  "  <<_clipROutx <<"  "<< _clipROutyz <<"      "<< _nRSmoothing<<endl;
@@ -308,15 +300,31 @@ float  DistMap::calc_distmapf(dbl3 mb, int3& dj) {
 	}
 }
 
+voxelImage readImageU8(const InputFile& inp) {
+	voxelImage VImage;
 
-int distMapExtrude(const InputFile& inp, bool verbose)  {
+	string fnam(inp.fileName());
+	if(fnam.empty()) { inp.giv("ElementDataFile", fnam) || inp.giv("read", fnam); }
+	cout<<" Image file: "<<fnam<<endl;
+
+	readConvertFromHeader(VImage, fnam);
+
+	if(string vxlkys=inp.kwrd("VxlPro"); vxlkys.size())
+		vxlProcess(vxlkys, VImage,"MSE:VxlPro");
+
+	return VImage;
+}
+
+voxelImage distMapExtrude(const voxelImage& VImage, const InputFile& inp, bool verbose)  {
+
 	VxlStrips cfg(inp, verbose);
 
 	int ivVal=0;
 
-	cfg.readImage();    // read image
-	cfg.createStripsX(); // RLE compress image
-	DistMap srf(cfg, ivVal);
+	cfg.setImageInfo(inp, VImage);    // read image
+	cfg.createStripsX(VImage); // RLE compress image
+
+	DistMap srf(inp, cfg, ivVal);
 
 	const int nx=cfg.nx, ny=cfg.ny; constexpr int nz1=1;
 	assert(cfg.nz==1);
@@ -330,7 +338,7 @@ int distMapExtrude(const InputFile& inp, bool verbose)  {
 	OMPragma("omp parallel for reduction(max:maxrrr)")
 	for (int iy = 0; iy<ny; ++iy)  {
 		int3 neilian{-nx,-ny,-nz1};
-		for (int ix = 0; ix<nx; ++ix)  if (cfg.VImage(ix,iy,0)==0) {
+		for (int ix = 0; ix<nx; ++ix)  if (VImage(ix,iy,0)==0) {
 			float rr = srf.calc_distmap(ix, iy, iz, neilian);
 			maxrrr = max(rr,maxrrr);
 			rads(ix,iy,iz) = rr;
@@ -348,6 +356,6 @@ int distMapExtrude(const InputFile& inp, bool verbose)  {
 			for (int ir = 0; ir<nr; ++ir)  vxls(ix,iy,ir+1)=0;
 		}
 
-	vxls.write(cfg.name()+"3D"+cfg.imgfrmt);
-	return 0;
+	// vxls.write(fnam+"3D"+cfg.imgfrmt);
+	return vxls;
 }

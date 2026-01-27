@@ -6,6 +6,7 @@
 #include "voxelImageI.h"
 #include "shapeToVoxel.h"
 #include "InputFile.h"
+#include "VxlStrips.h"
 
 #include "voxelImageProcess.h"
 #include "voxelNoise.h"

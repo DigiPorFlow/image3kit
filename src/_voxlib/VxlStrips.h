@@ -54,13 +54,13 @@ struct strips  {
 };
 
 
-class VxlStrips : public InputFile  {
+class VxlStrips  {
 public:
 
 	VxlStrips(const InputFile& inp, bool verbose);
 
-	void readImage();
-	void createStripsX();
+	void setImageInfo(const InputFile& inp, const voxelImage& VImage);
+	void createStripsX(const voxelImage& VImage);
 
 public:
 
@@ -77,13 +77,12 @@ public:
 	stvec<int>             segValues;
 	stvec<int2>            rockTypes_;
 	stvec<size_t>          nVxlVs;
-	voxelImage             VImage;
 };
 
 class DistMap { //: baseof MedSurf
 public:
 
-	DistMap(VxlStrips& cfg, size_t ivVal);
+	DistMap(const InputFile& inp, VxlStrips& cfg, size_t ivVal);
 
 	friend class VxlStrips; // debugging vtuWriteBSurfAnalyseCrnrs()
 
@@ -110,8 +109,10 @@ public:
 
 	int    _nRSmoothing;
 
-	const VxlStrips&       cg_;
 	stvec<stvec<strips>>&  segXs_;
 	strip                  invalidSeg;
 
 };
+
+voxelImage readImageU8(const InputFile& inp);
+voxelImage distMapExtrude(const voxelImage& VImage, const InputFile& inp, bool verbose);
