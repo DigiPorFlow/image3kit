@@ -16,6 +16,7 @@ your option) any later version. see <http://www.gnu.org/licenses/>.
 
 
 #include "voxelImage.h"
+#include "globals.h"
 #include <map>
 #include <limits>   // std::numeric_limits
 
@@ -428,9 +429,10 @@ template<typename T>   void voxelField<T>::writeBin(std::string fnam) const  {
 
 	std::ofstream of (fnam, mod);
 	assert(of);
-	if(data_.size())
-	of.write(reinterpret_cast<const char*>(&((*this)(0,0,0))), (size_t(nnn.x)*nnn.y*nnn.z) * sizeof(T));
-	of.flush();
+	if(data_.size()) {
+		of.write(reinterpret_cast<const char*>(&((*this)(0,0,0))), (size_t(nnn.x)*nnn.y*nnn.z) * sizeof(T));
+		of.flush();
+	}
 	std::cout<<std::endl;
 
 }
@@ -1645,15 +1647,15 @@ void mapToFrom(voxelImageT<T>& vImage, const voxelImageT<T>& vimg2, T vmin, T vm
 	std::cout << " mapping bounds: "<<Dn<<" to "<<N2<<std::endl;
 	OMPFor(reduction(+:count))
 	for (int k=N1.z; k<N2.z; ++k)
-	for (int j=N1.y; j<N2.y; ++j)
-	for (int i=N1.x; i<N2.x; ++i)  {
-		T&  vv = vImage(i, j, k);
-		if(vmin<=vv && vv<=vmax)  {
-			vv = vimg2(i+Dn.x,j+Dn.y,k+Dn.z);
-			++count;
-		}
-		if(scale>1e-16)  vv = vv*scale+shift;
-	}
+		for (int j=N1.y; j<N2.y; ++j)
+			for (int i=N1.x; i<N2.x; ++i)  {
+				T&  vv = vImage(i, j, k);
+				if(vmin<=vv && vv<=vmax)  {
+					vv = vimg2(i+Dn.x,j+Dn.y,k+Dn.z);
+					++count;
+				}
+				if(scale>1e-16)  vv = vv*scale+shift;
+			}
 	std::cout << "  N Changed: "<<count<<",  "<<100.*count/(double(N2.x-N1.x)*(N2.y-N1.y)*(N2.z-N1.z))<<"%"<<std::endl;
 }
 

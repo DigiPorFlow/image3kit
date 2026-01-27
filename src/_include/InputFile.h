@@ -311,7 +311,3 @@ private:
 	string const                      empty_;
 	bool                              multiline_; //!< if true, need ';' or "\n\n" for end of keyword data
 };
-
-
-// lazy hack!
-#include "IOUtils.h"

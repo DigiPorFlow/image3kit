@@ -1,5 +1,7 @@
 #ifndef VxTypS
-error please define VxTyp and VxTypS
+static_assert(false, "please define VxTyp and VxTypS");
+#define VxTyp unsigned char
+#define VxTypS "U8"
 #endif
 
 py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
@@ -107,8 +109,6 @@ py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
 )
 .def("plotAll", [](voxelImageT<VxTyp> &m, std::string args) { std::stringstream ss(args); return MCTProcessing::plotAll(ss, m); })
 ;
-
-mod.def("readImage", &readImage, py::arg("filename"), py::arg("processKeys")=1, "Global helper to read an image from a file.");
 
 // py::class_<instream>(mod, "instream", py::buffer_protocol())
 // .def(py::init([](py::object kwargs) { return new instream(kwargs); }))

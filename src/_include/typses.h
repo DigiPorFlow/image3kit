@@ -6,18 +6,19 @@
 
 
 #include <iomanip>
+#include <string>
+#include <vector>
+#include <utility>
+#include <initializer_list>
 #include <sstream>
-#include <fstream>
 #include <array>
 #include <cmath>
-#include <cstring>
 #include <algorithm>
 #include <map>
 #include <iostream>
 #include <cassert>
 #include <regex>
 #include <numeric>
-#include <execution>
 
 #define sizt size_t  // temp, was = int
 
@@ -75,7 +76,7 @@ struct var3  {
 	T _1()                       const  { return y; }
 	T _2()                       const  { return z; }
 
-
+	
 	var3&  operator += (const var3& v)  { x += v.x;  y += v.y;  z += v.z;  return  *this; }
 	var3&  operator -= (const var3& v)  { x -= v.x;  y -= v.y;  z -= v.z;  return  *this; }
 	var3&  operator += (const T& t)     { x += t;    y += t;    z += t;    return  *this; } // clumsy
@@ -348,8 +349,6 @@ inline          	dbls      mag(const piece<double>& dis)   { dbls rt(dis.size())
 inline          	floats    mag(const piece<float>& dis)    { floats rt(dis.size()); for_(dis,i){ rt[i] = std::abs(dis[i]); } return rt; }
 template<class T>	Vars<T>   mag(const piece<var3<T>>& dis)  { Vars<T> rt(dis.size()); for_(dis,i){ rt[i] = mag(dis[i]); } return rt; }
 
-
-
 template<class T> Vars<T>  operator &(const piece<var3<T>>& dis, const piece<var3<T>>& v) { Vars<T> rt(dis.size()); for_(rt,i){ rt[i] = dis[i]&v[i]; } return rt; }
 
 
@@ -621,7 +620,7 @@ template<class T, size_t N> std::ostream& operator << (std::ostream& out, const 
 	for (const auto& v: vec) { out << v << '\t'; } return out;  }
 
 
-
+// TODO: move to IOUtils.h ?
 
 inline void        replaceInFromTo(std::string& str, const std::string& frm, const std::string& to) {
 	//return str = std::regex_replace( str, std::regex(frm), to );
@@ -658,8 +657,8 @@ inline std::string basePath(const std::string& path) { /// removes file suffix
 inline std::string nameOf(const std::string& path) { // removes root dir and file suffix
 	auto dl=path.find_last_of('.');
 	auto sl=path.find_last_of('/');
-   if( sl != std::string::npos)    {
-    	if( dl!=std::string::npos && dl>sl) return path.substr(sl+1,dl-sl-1);
+	if( sl != std::string::npos) {
+		if( dl!=std::string::npos && dl>sl) return path.substr(sl+1,dl-sl-1);
 		return path.substr(sl+1);
 	}
 	else if( dl!=std::string::npos) return path.substr(0,dl);
@@ -753,14 +752,11 @@ vars<dbls> distribution(const piece<T>  xs, const piece<T> ws, int nBins=64)  {
 		++distrib[1][distInd];
 		distrib[2][distInd]+=ws[i];
 	}
-
 	distrib[1]/=distrib[1].sum()*deltaU;
 	distrib[2]/=distrib[2].sum()*deltaU;
 
 	return distrib;
 }
-
-
 
 
 inline double linearInterpolate(double x, double x1, double x2, double y1, double y2) 	 { 	 return y1+(x-x1)*(y2-y1)/(x2-x1); 	 }
@@ -782,16 +778,13 @@ inline double averageCDF(double xMin, double xMax, const std::vector<dbl2>& tabl
 	while((++itr)->a <=  xMax && itr != tabl.end())  {
 		wSum+=itr->a-(itr-1)->a;
 		wxy1+=(itr->a-(itr-1)->a)*0.5*(itr->b+(itr-1)->b);
-		//cout<<itr->a<<": "<<itr->b<<"     "<<0.5*(itr->b+(itr-1)->b)<<" s/ "<<(itr->a-(itr-1)->a)<<"   =  "<<wxy1/wSum<<std::endl;
 	}
 	if(itr != tabl.end())  {
 		wSum+=itr->a-xMax;
 		wxy1+=(itr->a-xMax)*0.5*(itr->b+linearInterpolate(xMin,(itr-1)->a, itr->a, (itr-1)->b, itr->b));
 	}
 
-
 	return wxy1/(wSum+1e-64);
-
 }
 
 
@@ -817,9 +810,8 @@ inline dbls logTrans(const piece<double>& vs, double s=1e+16) {  	dbls rt(vs); 	
 
 
 
-#include "globals.h" // lazy hack
 
-/* //- Debugging:
+/* //- Debugging, in Linux:
  Edit file: /usr/share/gcc/python/libstdcxx/v6/printers.py, for gdb pretty printing
 class varsPrinter:
     "Print a vars"

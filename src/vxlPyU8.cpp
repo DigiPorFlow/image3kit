@@ -88,6 +88,9 @@ PYBIND11_MODULE(_core, mod, py::mod_gil_not_used()) {
 #define VxTypS "VxlImgU8"
 #include "./vxlPyUX.hpp"
 
+mod.def("readImage", &readImage, py::arg("filename"), py::arg("processKeys")=1, "Global helper to read an image from a file.");
+
+
     mod.doc() = //"voxelImage of type " VxTypS
        R"pbdoc( -----------------------
 
