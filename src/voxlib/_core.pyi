@@ -242,7 +242,7 @@ class VxlImgU8:
         """
     def write(self, filename: str) -> None:
         """
-        Write the image to a file.
+        Write the image to a file (.mhd, .raw, .ra.gz formats).
         """
     def write8bit(self, filename: str, min: typing.SupportsFloat, max: typing.SupportsFloat) -> None:
         """

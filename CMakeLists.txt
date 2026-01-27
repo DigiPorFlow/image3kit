@@ -40,5 +40,16 @@ target_include_directories(_core PRIVATE src/_svplot)
 # This is passing in the version as a define just as an example
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
+set_property(TARGET _core PROPERTY CXX_STANDARD 23)
+# Toolset: gcc-linux:
+set(CMAKE_CXX_FLAGS_INIT "-Werror -Wall -Wextra -Wpedantic")
+# target_link_options(_core PRIVATE "-Wl,-z,defs")
+target_link_libraries(_core PRIVATE Python::Module)
+
 # The install directory is the output (wheel) directory
 install(TARGETS _core DESTINATION image3kit)
+
+
+# Add targets for local includes to ensure they appear in compile_commands.json
+# This fixes tooling errors in headers like typses.h
+add_subdirectory(src/_include)

@@ -129,7 +129,7 @@ int slice2RGBPng(const voxelImageT<T>& vImage, char axis, std::string fnam, int 
   int width, height, CHANNEL_NUM=3;
   auto nnn=vImage.size3();
   switch (axis) {
-    case 'x':  width=nnn[2]; height=nnn[1]; ensure(iSlice<nnn[0]," i_slice ?<"+_s(nnn[0]),2); break;
+    case 'x':  width=nnn[2]; height=nnn[1]; ensure(iSlice<nnn[0]," i_slice ?<"+_s(nnn[0]),2);  break;
     case 'y':  width=nnn[0]; height=nnn[2]; ensure(iSlice<nnn[1]," i_slice ?<"+_s(nnn[1]),2);  break;
     case 'z':  width=nnn[0]; height=nnn[1]; ensure(iSlice<nnn[2]," i_slice ?<"+_s(nnn[2]),2);  break;
   }
@@ -174,7 +174,7 @@ int slice2GrayPng(const voxelImageT<T>& vImage, char axis, std::string fnam, int
   int width, height, CHANNEL_NUM=1;
   auto nnn=vImage.size3();
   switch (axis) {
-    case 'x':  width=nnn[2]; height=nnn[1]; ensure(iSlice<nnn[0]," i_slice ?<"+_s(nnn[0]),2); break;
+    case 'x':  width=nnn[2]; height=nnn[1]; ensure(iSlice<nnn[0]," i_slice ?<"+_s(nnn[0]),2);  break;
     case 'y':  width=nnn[0]; height=nnn[2]; ensure(iSlice<nnn[1]," i_slice ?<"+_s(nnn[1]),2);  break;
     case 'z':  width=nnn[0]; height=nnn[1]; ensure(iSlice<nnn[2]," i_slice ?<"+_s(nnn[2]),2);  break;
   }
@@ -192,7 +192,7 @@ int slice2GrayPng(const voxelImageT<T>& vImage, char axis, std::string fnam, int
       size_t ind=0;
       switch (axis) { // move out of the loop
         case 'z': ind=vImage.index(x,y,iSlice);  break;
-        case 'x': ind=vImage.index(iSlice,x,y); break;
+        case 'x': ind=vImage.index(iSlice,x,y);  break;
         case 'y': ind=vImage.index(x,iSlice,y);  break;
       }
       row[x] = (float(std::min(std::max(minvv,vImage(ind)),maxvv))-bgnv)*ZdelV;
@@ -289,8 +289,8 @@ template<typename T>  bool sliceToPng( std::stringstream& ins, voxelImageT<T>& v
 template<typename T>  bool sliceToPngBW( std::stringstream& ins, voxelImageT<T>& vImg) {
   if(ins.peek()=='?') { ins.str("normalAxis fileName iSlice  minv maxv"); return true;}
   int minv(0); int maxv(-1000001); int iSlice(-1000000);
-  string normalAxis("x");
-  string fnam("Img");
+  std::string normalAxis("x");
+  std::string fnam("Img");
   ins >> normalAxis;
   readOutFileNam(ins, fnam);
   ins >> iSlice >> minv >> maxv;

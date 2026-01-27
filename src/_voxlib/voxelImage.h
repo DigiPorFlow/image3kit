@@ -27,15 +27,11 @@ your option) any later version. see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iostream>
 #include <string.h>
-#include <vector>
-#include <valarray>
 #include <cassert>
 #include <sstream>
 #include <memory>
 #include <algorithm>
-#include <numeric>
 #include <unordered_map>
-#include <functional>
 
 #include "typses.h"
 
