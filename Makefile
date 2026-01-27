@@ -1,5 +1,5 @@
 
-build_pyi:
+build_update:
 	pip install .
 	pybind11-stubgen voxlib --output-dir src
 
