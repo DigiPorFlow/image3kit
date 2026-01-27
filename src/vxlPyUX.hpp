@@ -93,6 +93,7 @@ py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
 //.def("maskWriteFraction", &voxelImageT<VxTyp>::maskWriteFraction)
 .def("mapFrom", [](voxelImageT<VxTyp>& m, const voxelImageT<VxTyp>& vimg2, VxTyp vmin, VxTyp vmax, double scale, double shift) { mapToFrom(m, vimg2, vmin, vmax, scale, shift); }, py::arg("sourceImage"), py::arg("vmin"), py::arg("vmax"), py::arg("scale"), py::arg("shift"), "Map values from another image.")
 .def("addSurfNoise", [](voxelImageT<VxTyp> &m, const int randMask1, const int randMask2, int trsh, int randseed) { addSurfNoise(m, randMask1, randMask2, trsh, randseed); }, py::arg("mask1"), py::arg("mask2"), py::arg("threshold"), py::arg("seed"), "Add surface noise.")
+.def("distMapExtrude", [](voxelImageT<VxTyp> &m, py::dict dic) { m = distMapExtrude(m, pyCastInput(dic), true); }, py::arg("distMapDict"), "Extrude proportional to distance map.")
 // // Process wrappers (string interface)
 
 // // Individual bindings for convenience
