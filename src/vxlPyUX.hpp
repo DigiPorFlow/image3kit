@@ -11,8 +11,8 @@ py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
             sizeof(VxTyp),                          // Size of one scalar
             py::format_descriptor<VxTyp>::format(), // Python struct-style format descriptor
             3,                                    // Number of dimensions
-            { size_t(m.nz()), size_t(m.ny()), size_t(m.nx()) },             // Dimensions
-            { long(sizeof(VxTyp) * m.nxy()), long(sizeof(VxTyp) *m.nx()), long(sizeof(VxTyp)) } // Strides (in bytes)
+            { size_t(m.nx()), size_t(m.ny()), size_t(m.nz()) },             // Dimensions
+            { long(sizeof(VxTyp)), long(sizeof(VxTyp) *m.nx()), long(sizeof(VxTyp) * m.nxy()) } // Strides (in bytes)
         );
     })
     .def(py::init([](py::tuple tpl, VxTyp value) { return voxelImageT<VxTyp>(tpl[0].cast<int>(), tpl[1].cast<int>(), tpl[2].cast<int>(), value); }),
@@ -24,14 +24,14 @@ py::class_<voxelImageT<VxTyp>>(mod, VxTypS, py::buffer_protocol())
         sizeof(VxTyp),
         py::format_descriptor<VxTyp>::format(),
         3,
-        { size_t(m.nz()), size_t(m.ny()), size_t(m.nx()) },             // Dimensions
-        { long(sizeof(VxTyp) * m.nxy()), long(sizeof(VxTyp) *m.nx()), long(sizeof(VxTyp)) } // Strides (in bytes)
+        { size_t(m.nx()), size_t(m.ny()), size_t(m.nz()) },             // Dimensions
+        { long(sizeof(VxTyp)), long(sizeof(VxTyp) *m.nx()), long(sizeof(VxTyp) * m.nxy()) } // Strides (in bytes)
     }); }, "Get the raw data buffer as a numpy array.")
 .def("nx", &voxelImageT<VxTyp>::nx)
 .def("ny", &voxelImageT<VxTyp>::ny)
 .def("nz", &voxelImageT<VxTyp>::nz)
 .def("printInfo", &voxelImageT<VxTyp>::printInfo)
-.def("shape", [&](voxelImageT<VxTyp> &m) { return py::make_tuple(m.nz(), m.nz(), m.nz()); })
+.def("shape", [&](voxelImageT<VxTyp> &m) { return py::make_tuple(m.nx(), m.ny(), m.nz()); })
 .def("write", &voxelImageT<VxTyp>::write, py::arg("filename"), "Write the image to a file (.mhd, .raw, .ra.gz formats).")
 .def("writeNoHdr", &voxelImageT<VxTyp>::writeNoHdr, py::arg("filename"), "Write the raw image data without a header.")
 // .def("writeHeader", &voxelImageT<VxTyp>::writeHeader)
