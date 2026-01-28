@@ -1,36 +1,13 @@
 """
- -----------------------
-
-        .. currentmodule:: VoxelImage
-
-        .. autosummary::
-           :toctree: _generate
-
-           add
-           subtract
-    
+The VxlImg template classes
 """
 from __future__ import annotations
 import collections.abc
+import image3kit._core.sirun
 import numpy
 import numpy.typing
 import typing
-__all__: list[str] = ['Input', 'VxlImgU8', 'cube', 'cylinder', 'dbl3', 'int3', 'readImage', 'readImageU8', 'shape', 'sphere', 'voxelImageTBase']
-class Input:
-    def __init__(self, arg0: dict) -> None:
-        ...
-    def add(self, arg0: str, arg1: str) -> None:
-        ...
-    def echoKeywords(self) -> None:
-        ...
-    def get(self, arg0: str, arg1: str) -> str:
-        ...
-    def renameKeys(self, arg0: str, arg1: str) -> None:
-        ...
-    def set(self, arg0: str, arg1: str) -> None:
-        ...
-    def setDefault(self, arg0: str, arg1: str) -> None:
-        ...
+__all__: list[str] = ['VxlImgU8', 'cube', 'cylinder', 'readImage', 'readImageU8', 'shape', 'sphere', 'voxelImageTBase']
 class VxlImgU8:
     def AND(self, other: VxlImgU8) -> None:
         """
@@ -102,7 +79,7 @@ class VxlImgU8:
         """
         Circle out operation.
         """
-    def cropD(self, begin: int3, end: int3, emptyLayers: typing.SupportsInt = 0, emptyLayersValue: typing.SupportsInt = 1, verbose: bool = False) -> None:
+    def cropD(self, begin: image3kit._core.sirun.int3, end: image3kit._core.sirun.int3, emptyLayers: typing.SupportsInt = 0, emptyLayersValue: typing.SupportsInt = 1, verbose: bool = False) -> None:
         """
         Crop the image by a specified depth.
         """
@@ -180,7 +157,7 @@ class VxlImgU8:
         """
         Read image data from an ASCII file.
         """
-    def readFromHeader(self, header_file: str, processKeys: typing.SupportsInt = 1) -> None:
+    def readFromHeader(self, filename: str, processKeys: typing.SupportsInt = 1) -> None:
         """
         Read image dimensions/metadata from a header file.
         """
@@ -218,7 +195,7 @@ class VxlImgU8:
         """
     def segment2(self, nSegs: typing.SupportsInt = 2, th: collections.abc.Sequence[typing.SupportsInt] = [], minSizs: collections.abc.Sequence[typing.SupportsInt] = [], noisev: typing.SupportsFloat = 2.0, localF: typing.SupportsFloat = 800.0, flatnes: typing.SupportsFloat = 0.1, resolution: typing.SupportsFloat = 2.0, gradFactor: typing.SupportsFloat = 0.0, krnl: typing.SupportsInt = 2, nItrs: typing.SupportsInt = 13, writedumps: typing.SupportsInt = 0) -> bool:
         ...
-    def setOffset(self, offset: dbl3) -> None:
+    def setOffset(self, offset: image3kit._core.sirun.dbl3) -> None:
         """
         Set the spatial offset (origin).
         """
@@ -276,66 +253,6 @@ class cube(shape):
 class cylinder(shape):
     def __init__(self, arg0: tuple, arg1: tuple, arg2: typing.SupportsFloat, arg3: typing.SupportsInt) -> None:
         ...
-class dbl3:
-    @typing.overload
-    def __init__(self) -> None:
-        ...
-    @typing.overload
-    def __init__(self, arg0: typing.SupportsFloat, arg1: typing.SupportsFloat, arg2: typing.SupportsFloat) -> None:
-        ...
-    @typing.overload
-    def __init__(self, arg0: tuple) -> None:
-        ...
-    def __repr__(self) -> str:
-        ...
-    @property
-    def x(self) -> float:
-        ...
-    @x.setter
-    def x(self, arg0: typing.SupportsFloat) -> None:
-        ...
-    @property
-    def y(self) -> float:
-        ...
-    @y.setter
-    def y(self, arg0: typing.SupportsFloat) -> None:
-        ...
-    @property
-    def z(self) -> float:
-        ...
-    @z.setter
-    def z(self, arg0: typing.SupportsFloat) -> None:
-        ...
-class int3:
-    @typing.overload
-    def __init__(self) -> None:
-        ...
-    @typing.overload
-    def __init__(self, arg0: typing.SupportsInt, arg1: typing.SupportsInt, arg2: typing.SupportsInt) -> None:
-        ...
-    @typing.overload
-    def __init__(self, arg0: tuple) -> None:
-        ...
-    def __repr__(self) -> str:
-        ...
-    @property
-    def x(self) -> int:
-        ...
-    @x.setter
-    def x(self, arg0: typing.SupportsInt) -> None:
-        ...
-    @property
-    def y(self) -> int:
-        ...
-    @y.setter
-    def y(self, arg0: typing.SupportsInt) -> None:
-        ...
-    @property
-    def z(self) -> int:
-        ...
-    @z.setter
-    def z(self, arg0: typing.SupportsInt) -> None:
-        ...
 class shape:
     pass
 class sphere(shape):
@@ -351,4 +268,3 @@ def readImageU8(dict: dict) -> VxlImgU8:
     """
     Global helper to read an uint8 (3D) image from a file.
     """
-__version__: str = '0.0.1'
