@@ -7,7 +7,7 @@ import image3kit._core.sirun
 import numpy
 import numpy.typing
 import typing
-__all__: list[str] = ['VxlImgU8', 'cube', 'cylinder', 'readImage', 'readImageU8', 'shape', 'sphere', 'voxelImageTBase']
+__all__: list[str] = ['VxlImgU8', 'cube', 'cylinder', 'labelImage', 'readImage', 'readImageU8', 'shape', 'sphere', 'voxelImageTBase']
 class VxlImgU8:
     def AND(self, other: VxlImgU8) -> None:
         """
@@ -71,9 +71,17 @@ class VxlImgU8:
         """
         Add surface noise.
         """
+    def adjustBrightnessWith(self, image_file: str) -> bool:
+        ...
+    def adjustSliceBrightness(self, mask_a: VxlImgU8, mask_b: VxlImgU8, ref_image: VxlImgU8, smooth_iter: typing.SupportsInt = 3, smooth_kernel: typing.SupportsInt = 20) -> bool:
+        ...
     def averageWith(self, arg0: str) -> bool:
         ...
     def averageWith_mBE(self, arg0: str) -> bool:
+        ...
+    def bilateralGauss(self, iterations: typing.SupportsInt = 1, kernel_radius: typing.SupportsInt = 1, sigma_val: typing.SupportsFloat = 16.0, sharpness: typing.SupportsFloat = 0.1, sigma_spatial: typing.SupportsFloat = 2.0) -> None:
+        ...
+    def bilateralX(self, iterations: typing.SupportsInt = 1, kernel_radius: typing.SupportsInt = 1, x_step: typing.SupportsInt = 2, sigma_val: typing.SupportsFloat = 16.0, sharpness: typing.SupportsFloat = 0.1, sigma_spatial: typing.SupportsFloat = 2.0) -> None:
         ...
     def circleOut(self, x: typing.SupportsInt, y: typing.SupportsInt, r: typing.SupportsInt, d: str, val: typing.SupportsInt) -> None:
         """
@@ -83,6 +91,8 @@ class VxlImgU8:
         """
         Crop the image by a specified depth.
         """
+    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> bool:
+        ...
     def data(self) -> numpy.typing.NDArray[numpy.uint8]:
         """
         Get the raw data buffer as a numpy array.
@@ -91,6 +101,8 @@ class VxlImgU8:
         """
         Delense operation.
         """
+    def dering(self, x0: typing.SupportsInt, y0: typing.SupportsInt, x1: typing.SupportsInt, y1: typing.SupportsInt, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 255, nr: typing.SupportsInt = 0, ntheta: typing.SupportsInt = 18, nz: typing.SupportsInt = 0) -> bool:
+        ...
     def direction(self, arg0: str) -> None:
         """
         Get direction?
@@ -107,6 +119,8 @@ class VxlImgU8:
         """
         Fill closed holes in the image.
         """
+    def flipEndian(self) -> None:
+        ...
     def grow0(self) -> None:
         """
         Grow pore phase (0).
@@ -117,12 +131,16 @@ class VxlImgU8:
         """
     def growLabel(self, arg0: typing.SupportsInt) -> None:
         ...
+    def growingThreshold(self, startMin: typing.SupportsInt, startMax: typing.SupportsInt, finalMin: typing.SupportsInt, finalMax: typing.SupportsInt, iterations: typing.SupportsInt = 4) -> None:
+        ...
     def keepLargest0(self) -> None:
         ...
     def mapFrom(self, sourceImage: VxlImgU8, vmin: typing.SupportsInt, vmax: typing.SupportsInt, scale: typing.SupportsFloat, shift: typing.SupportsFloat) -> None:
         """
         Map values from another image.
         """
+    def meanWide(self, width: typing.SupportsInt = 0, noise_val: typing.SupportsInt = 4, average: typing.SupportsInt = 0, delta: typing.SupportsInt = 20, iterations: typing.SupportsInt = 15, smooth_image: str = '') -> bool:
+        ...
     def medianFilter(self) -> None:
         """
         Apply median filter.
@@ -131,6 +149,8 @@ class VxlImgU8:
         """
         Apply median X filter.
         """
+    def mode26(self, arg0: typing.SupportsInt) -> None:
+        ...
     def modeNSames(self, nSameNeighbors: typing.SupportsInt) -> int:
         """
         Apply mode filter based on neighbor count.
@@ -140,6 +160,8 @@ class VxlImgU8:
     def ny(self) -> int:
         ...
     def nz(self) -> int:
+        ...
+    def otsu_th(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
         ...
     def plotAll(self, arg0: str) -> bool:
         ...
@@ -157,6 +179,8 @@ class VxlImgU8:
         """
         Read image data from an ASCII file.
         """
+    def readFromFloat(self, header: str, scale: typing.SupportsFloat = 1.0, shift: typing.SupportsFloat = 0.0) -> bool:
+        ...
     def readFromHeader(self, filename: str, processKeys: typing.SupportsInt = 1) -> None:
         """
         Read image dimensions/metadata from a header file.
@@ -165,10 +189,16 @@ class VxlImgU8:
         """
         Rotate/Redirect image.
         """
+    def replaceByImageRange(self, min_val: typing.SupportsFloat, max_val: typing.SupportsFloat, image_file: str) -> None:
+        ...
+    def replaceOutSideValue(self, val_old: typing.SupportsInt = 0, val_new: typing.SupportsInt = 2, hole_size: typing.SupportsInt = 5) -> bool:
+        ...
     def replaceRange(self, min: typing.SupportsInt, max: typing.SupportsInt, val: typing.SupportsInt) -> None:
         """
         Replace values in range [min, max] with val.
         """
+    def replaceRangeByImage(self, min_val: typing.SupportsFloat, max_val: typing.SupportsFloat, image_file: str) -> None:
+        ...
     def resample(self, factor: typing.SupportsFloat) -> None:
         """
         Resample image by factor f.
@@ -193,6 +223,8 @@ class VxlImgU8:
         """
         Reslice along Z axis.
         """
+    def segment(self, n_segments: typing.SupportsInt = 2, thresholds: collections.abc.Sequence[typing.SupportsInt], min_sizes: collections.abc.Sequence[typing.SupportsInt], smooth_image: str = '', noise_val: typing.SupportsFloat = 16.0, resolution_sq: typing.SupportsFloat = 2.0, write_dumps: typing.SupportsInt = 0) -> bool:
+        ...
     def segment2(self, nSegs: typing.SupportsInt = 2, th: collections.abc.Sequence[typing.SupportsInt] = [], minSizs: collections.abc.Sequence[typing.SupportsInt] = [], noisev: typing.SupportsFloat = 2.0, localF: typing.SupportsFloat = 800.0, flatnes: typing.SupportsFloat = 0.1, resolution: typing.SupportsFloat = 2.0, gradFactor: typing.SupportsFloat = 0.0, krnl: typing.SupportsInt = 2, nItrs: typing.SupportsInt = 13, writedumps: typing.SupportsInt = 0) -> bool:
         ...
     def setOffset(self, offset: image3kit._core.sirun.dbl3) -> None:
@@ -223,10 +255,18 @@ class VxlImgU8:
         """
         Save a 2D slice as a PNG image.
         """
+    def smooth(self, iterations: typing.SupportsInt = 1, kernel_radius: typing.SupportsInt = 1, sigma_val: typing.SupportsFloat = 16.0, sharpness: typing.SupportsFloat = 0.1) -> bool:
+        ...
+    def svgHistogram(self, filename: str = 'aa.svg', bins: typing.SupportsInt = 128, min_val: typing.SupportsFloat = 3e+38, max_val: typing.SupportsFloat = -3e+38) -> int:
+        ...
+    def svgZProfile(self, filename: str = 'aa.svg', min_val: typing.SupportsFloat = 0, max_val: typing.SupportsFloat = 255) -> int:
+        ...
     def threshold101(self, min: typing.SupportsInt, max: typing.SupportsInt) -> None:
         """
         Apply a threshold to convert to 0/1.
         """
+    def variance(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 255) -> float:
+        ...
     def write(self, filename: str) -> None:
         """
         Write the image to a file (.mhd, .raw, .ra.gz formats).
@@ -260,6 +300,8 @@ class sphere(shape):
         ...
 class voxelImageTBase:
     pass
+def labelImage(arg0: VxlImgU8, arg1: typing.SupportsFloat, arg2: typing.SupportsFloat) -> ...:
+    ...
 def readImage(filename: typing.Any, processKeys: typing.SupportsInt = 1) -> voxelImageTBase:
     """
     Global helper to read an image from a file.
