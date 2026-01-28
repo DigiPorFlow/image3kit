@@ -1,7 +1,7 @@
 
 build_update:
 	pip install .
-	pybind11-stubgen voxlib --output-dir src
+	pybind11-stubgen image3kit --output-dir src
 
 install:
 	pip install .
