@@ -11,7 +11,7 @@ __all__: list[str] = ['VxlImgF32', 'VxlImgI32', 'VxlImgU16', 'VxlImgU8', 'cube',
 class VxlImgF32:
     def AND(self, other: VxlImgF32) -> None:
         """
-        Pixel-wise AND operation.
+        Voxel-by-voxel AND operation.
         """
     def FaceMedian06(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt) -> int:
         """
@@ -19,11 +19,11 @@ class VxlImgF32:
         """
     def NOT(self, arg0: VxlImgF32) -> None:
         """
-        Pixel-wise NOT operation.
+        Voxel-by-voxel NOT operation.
         """
     def OR(self, other: VxlImgF32) -> None:
         """
-        Pixel-wise OR operation.
+        Voxel-by-voxel OR operation.
         """
     def Paint(self, shape: shape) -> None:
         """
@@ -55,7 +55,7 @@ class VxlImgF32:
         """
     def XOR(self, other: VxlImgF32) -> None:
         """
-        Pixel-wise XOR operation.
+        Voxel-by-voxel XOR operation.
         """
     def __buffer__(self, flags):
         """
@@ -101,7 +101,7 @@ class VxlImgF32:
         """
         Crop the image (inplace) from begin index tupe ix,iy,iz (inclusive) to and end index tuple.
         """
-    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> bool:
+    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> None:
         ...
     def data(self) -> numpy.typing.NDArray[numpy.float32]:
         """
@@ -131,9 +131,9 @@ class VxlImgF32:
         """
         Grow pore phase (voxel values of 0).
         """
-    def growBox(self, layers: typing.SupportsInt) -> None:
+    def growBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Expand the image boundaries, increasing its size by the given number of `layers` in all directions
+        Expand the image boundaries, increasing its size by `num_layers` in all directions
         """
     def growLabel(self, arg0: typing.SupportsFloat) -> None:
         ...
@@ -167,11 +167,11 @@ class VxlImgF32:
         ...
     def nz(self) -> int:
         ...
-    def otsu_th(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
+    def otsu_threshold(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
         ...
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgF32 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
-        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging
+        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
         """
     def printInfo(self) -> None:
         ...
@@ -237,9 +237,9 @@ class VxlImgF32:
         """
         Shrink pore phase (voxel values of 0).
         """
-    def shrinkBox(self, layers: typing.SupportsInt) -> None:
+    def shrinkBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Shrink the image boundaries, decreasing its size by the given number of `layers` in all directions
+        Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
     def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
         """
@@ -277,14 +277,14 @@ class VxlImgF32:
         """
         Write contour extraction to a surface file.
         """
-    def writeNoHdr(self, filename: str) -> None:
+    def writeNoHeader(self, filename: str) -> None:
         """
         Write the raw image data without a header.
         """
 class VxlImgI32:
     def AND(self, other: VxlImgI32) -> None:
         """
-        Pixel-wise AND operation.
+        Voxel-by-voxel AND operation.
         """
     def FaceMedian06(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt) -> int:
         """
@@ -292,11 +292,11 @@ class VxlImgI32:
         """
     def NOT(self, arg0: VxlImgI32) -> None:
         """
-        Pixel-wise NOT operation.
+        Voxel-by-voxel NOT operation.
         """
     def OR(self, other: VxlImgI32) -> None:
         """
-        Pixel-wise OR operation.
+        Voxel-by-voxel OR operation.
         """
     def Paint(self, shape: shape) -> None:
         """
@@ -328,7 +328,7 @@ class VxlImgI32:
         """
     def XOR(self, other: VxlImgI32) -> None:
         """
-        Pixel-wise XOR operation.
+        Voxel-by-voxel XOR operation.
         """
     def __buffer__(self, flags):
         """
@@ -374,7 +374,7 @@ class VxlImgI32:
         """
         Crop the image (inplace) from begin index tupe ix,iy,iz (inclusive) to and end index tuple.
         """
-    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> bool:
+    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> None:
         ...
     def data(self) -> numpy.typing.NDArray[numpy.int32]:
         """
@@ -404,9 +404,9 @@ class VxlImgI32:
         """
         Grow pore phase (voxel values of 0).
         """
-    def growBox(self, layers: typing.SupportsInt) -> None:
+    def growBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Expand the image boundaries, increasing its size by the given number of `layers` in all directions
+        Expand the image boundaries, increasing its size by `num_layers` in all directions
         """
     def growLabel(self, arg0: typing.SupportsInt) -> None:
         ...
@@ -440,11 +440,11 @@ class VxlImgI32:
         ...
     def nz(self) -> int:
         ...
-    def otsu_th(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
+    def otsu_threshold(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
         ...
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgI32 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
-        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging
+        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
         """
     def printInfo(self) -> None:
         ...
@@ -510,9 +510,9 @@ class VxlImgI32:
         """
         Shrink pore phase (voxel values of 0).
         """
-    def shrinkBox(self, layers: typing.SupportsInt) -> None:
+    def shrinkBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Shrink the image boundaries, decreasing its size by the given number of `layers` in all directions
+        Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
     def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
         """
@@ -550,14 +550,14 @@ class VxlImgI32:
         """
         Write contour extraction to a surface file.
         """
-    def writeNoHdr(self, filename: str) -> None:
+    def writeNoHeader(self, filename: str) -> None:
         """
         Write the raw image data without a header.
         """
 class VxlImgU16:
     def AND(self, other: VxlImgU16) -> None:
         """
-        Pixel-wise AND operation.
+        Voxel-by-voxel AND operation.
         """
     def FaceMedian06(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt) -> int:
         """
@@ -565,11 +565,11 @@ class VxlImgU16:
         """
     def NOT(self, arg0: VxlImgU16) -> None:
         """
-        Pixel-wise NOT operation.
+        Voxel-by-voxel NOT operation.
         """
     def OR(self, other: VxlImgU16) -> None:
         """
-        Pixel-wise OR operation.
+        Voxel-by-voxel OR operation.
         """
     def Paint(self, shape: shape) -> None:
         """
@@ -601,7 +601,7 @@ class VxlImgU16:
         """
     def XOR(self, other: VxlImgU16) -> None:
         """
-        Pixel-wise XOR operation.
+        Voxel-by-voxel XOR operation.
         """
     def __buffer__(self, flags):
         """
@@ -647,7 +647,7 @@ class VxlImgU16:
         """
         Crop the image (inplace) from begin index tupe ix,iy,iz (inclusive) to and end index tuple.
         """
-    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> bool:
+    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> None:
         ...
     def data(self) -> numpy.typing.NDArray[numpy.uint16]:
         """
@@ -677,9 +677,9 @@ class VxlImgU16:
         """
         Grow pore phase (voxel values of 0).
         """
-    def growBox(self, layers: typing.SupportsInt) -> None:
+    def growBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Expand the image boundaries, increasing its size by the given number of `layers` in all directions
+        Expand the image boundaries, increasing its size by `num_layers` in all directions
         """
     def growLabel(self, arg0: typing.SupportsInt) -> None:
         ...
@@ -713,11 +713,11 @@ class VxlImgU16:
         ...
     def nz(self) -> int:
         ...
-    def otsu_th(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
+    def otsu_threshold(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
         ...
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgU16 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
-        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging
+        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
         """
     def printInfo(self) -> None:
         ...
@@ -787,9 +787,9 @@ class VxlImgU16:
         """
         Shrink pore phase (voxel values of 0).
         """
-    def shrinkBox(self, layers: typing.SupportsInt) -> None:
+    def shrinkBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Shrink the image boundaries, decreasing its size by the given number of `layers` in all directions
+        Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
     def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
         """
@@ -827,14 +827,14 @@ class VxlImgU16:
         """
         Write contour extraction to a surface file.
         """
-    def writeNoHdr(self, filename: str) -> None:
+    def writeNoHeader(self, filename: str) -> None:
         """
         Write the raw image data without a header.
         """
 class VxlImgU8:
     def AND(self, other: VxlImgU8) -> None:
         """
-        Pixel-wise AND operation.
+        Voxel-by-voxel AND operation.
         """
     def FaceMedian06(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt) -> int:
         """
@@ -842,11 +842,11 @@ class VxlImgU8:
         """
     def NOT(self, arg0: VxlImgU8) -> None:
         """
-        Pixel-wise NOT operation.
+        Voxel-by-voxel NOT operation.
         """
     def OR(self, other: VxlImgU8) -> None:
         """
-        Pixel-wise OR operation.
+        Voxel-by-voxel OR operation.
         """
     def Paint(self, shape: shape) -> None:
         """
@@ -878,7 +878,7 @@ class VxlImgU8:
         """
     def XOR(self, other: VxlImgU8) -> None:
         """
-        Pixel-wise XOR operation.
+        Voxel-by-voxel XOR operation.
         """
     def __buffer__(self, flags):
         """
@@ -924,7 +924,7 @@ class VxlImgU8:
         """
         Crop the image (inplace) from begin index tupe ix,iy,iz (inclusive) to and end index tuple.
         """
-    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> bool:
+    def cutOutside(self, axis: str = 'z', extra_out: typing.SupportsInt = 0, threshold: typing.SupportsInt = -1, cut_highs: typing.SupportsInt = 0, shift_x: typing.SupportsInt = 0, shift_y: typing.SupportsInt = 0, fill_val: typing.SupportsInt = 0) -> None:
         ...
     def data(self) -> numpy.typing.NDArray[numpy.uint8]:
         """
@@ -958,9 +958,9 @@ class VxlImgU8:
         """
         Grow pore phase (voxel values of 0).
         """
-    def growBox(self, layers: typing.SupportsInt) -> None:
+    def growBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Expand the image boundaries, increasing its size by the given number of `layers` in all directions
+        Expand the image boundaries, increasing its size by `num_layers` in all directions
         """
     def growLabel(self, arg0: typing.SupportsInt) -> None:
         ...
@@ -994,11 +994,11 @@ class VxlImgU8:
         ...
     def nz(self) -> int:
         ...
-    def otsu_th(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
+    def otsu_threshold(self, min_val: typing.SupportsInt = 0, max_val: typing.SupportsInt = 256) -> typing.Annotated[list[float], "FixedSize(5)"]:
         ...
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgU8 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
-        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging
+        Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
         """
     def printInfo(self) -> None:
         ...
@@ -1068,9 +1068,9 @@ class VxlImgU8:
         """
         Shrink pore phase (voxel values of 0).
         """
-    def shrinkBox(self, layers: typing.SupportsInt) -> None:
+    def shrinkBox(self, num_layers: typing.SupportsInt) -> None:
         """
-        Shrink the image boundaries, decreasing its size by the given number of `layers` in all directions
+        Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
     def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
         """
@@ -1108,7 +1108,7 @@ class VxlImgU8:
         """
         Write contour extraction to a surface file.
         """
-    def writeNoHdr(self, filename: str) -> None:
+    def writeNoHeader(self, filename: str) -> None:
         """
         Write the raw image data without a header.
         """
