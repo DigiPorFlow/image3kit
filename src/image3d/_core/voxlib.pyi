@@ -49,10 +49,6 @@ class VxlImgF32:
         """
         Paint before the shape (plane...)
         """
-    def PointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsFloat, lbl1: typing.SupportsFloat) -> None:
-        """
-        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
-        """
     def XOR(self, other: VxlImgF32) -> None:
         """
         Voxel-by-voxel XOR operation.
@@ -139,8 +135,10 @@ class VxlImgF32:
         ...
     def growingThreshold(self, startMin: typing.SupportsFloat, startMax: typing.SupportsFloat, finalMin: typing.SupportsFloat, finalMax: typing.SupportsFloat, iterations: typing.SupportsInt = 4) -> None:
         ...
-    def keepLargest0(self) -> None:
-        ...
+    def keepLargest(self, min: typing.SupportsFloat, max: typing.SupportsFloat) -> None:
+        """
+        Keep largest singly-connected region with values in [min, max].
+        """
     def mapFrom(self, sourceImage: VxlImgF32, vmin: typing.SupportsFloat, vmax: typing.SupportsFloat, scale: typing.SupportsFloat, shift: typing.SupportsFloat) -> None:
         """
         Map values from another image.
@@ -172,6 +170,10 @@ class VxlImgF32:
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgF32 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
         Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
+        """
+    def pointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsFloat, lbl1: typing.SupportsFloat) -> None:
+        """
+        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def printInfo(self) -> None:
         ...
@@ -241,11 +243,7 @@ class VxlImgF32:
         """
         Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
-    def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
-        """
-        Read a slice from a Png image
-        """
-    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt, color_map: str = 'gray') -> None:
+    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt = -1000000, val_min: typing.SupportsInt = 0, val_max: typing.SupportsInt = -1000001, color_map: str = 'gray') -> None:
         """
         Save a 2D slice as a PNG image, color_map can be 'gray' or 'RGB'
         """
@@ -321,10 +319,6 @@ class VxlImgI32:
     def PaintBefore(self, shape: shape) -> None:
         """
         Paint before the shape (plane...)
-        """
-    def PointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
-        """
-        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def XOR(self, other: VxlImgI32) -> None:
         """
@@ -412,8 +406,10 @@ class VxlImgI32:
         ...
     def growingThreshold(self, startMin: typing.SupportsInt, startMax: typing.SupportsInt, finalMin: typing.SupportsInt, finalMax: typing.SupportsInt, iterations: typing.SupportsInt = 4) -> None:
         ...
-    def keepLargest0(self) -> None:
-        ...
+    def keepLargest(self, min: typing.SupportsInt, max: typing.SupportsInt) -> None:
+        """
+        Keep largest singly-connected region with values in [min, max].
+        """
     def mapFrom(self, sourceImage: VxlImgI32, vmin: typing.SupportsInt, vmax: typing.SupportsInt, scale: typing.SupportsFloat, shift: typing.SupportsFloat) -> None:
         """
         Map values from another image.
@@ -445,6 +441,10 @@ class VxlImgI32:
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgI32 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
         Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
+        """
+    def pointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
+        """
+        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def printInfo(self) -> None:
         ...
@@ -514,11 +514,7 @@ class VxlImgI32:
         """
         Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
-    def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
-        """
-        Read a slice from a Png image
-        """
-    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt, color_map: str = 'gray') -> None:
+    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt = -1000000, val_min: typing.SupportsInt = 0, val_max: typing.SupportsInt = -1000001, color_map: str = 'gray') -> None:
         """
         Save a 2D slice as a PNG image, color_map can be 'gray' or 'RGB'
         """
@@ -594,10 +590,6 @@ class VxlImgU16:
     def PaintBefore(self, shape: shape) -> None:
         """
         Paint before the shape (plane...)
-        """
-    def PointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
-        """
-        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def XOR(self, other: VxlImgU16) -> None:
         """
@@ -685,8 +677,10 @@ class VxlImgU16:
         ...
     def growingThreshold(self, startMin: typing.SupportsInt, startMax: typing.SupportsInt, finalMin: typing.SupportsInt, finalMax: typing.SupportsInt, iterations: typing.SupportsInt = 4) -> None:
         ...
-    def keepLargest0(self) -> None:
-        ...
+    def keepLargest(self, min: typing.SupportsInt, max: typing.SupportsInt) -> None:
+        """
+        Keep largest singly-connected region with values in [min, max].
+        """
     def mapFrom(self, sourceImage: VxlImgU16, vmin: typing.SupportsInt, vmax: typing.SupportsInt, scale: typing.SupportsFloat, shift: typing.SupportsFloat) -> None:
         """
         Map values from another image.
@@ -718,6 +712,10 @@ class VxlImgU16:
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgU16 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
         Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
+        """
+    def pointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
+        """
+        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def printInfo(self) -> None:
         ...
@@ -791,11 +789,7 @@ class VxlImgU16:
         """
         Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
-    def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
-        """
-        Read a slice from a Png image
-        """
-    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt, color_map: str = 'gray') -> None:
+    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt = -1000000, val_min: typing.SupportsInt = 0, val_max: typing.SupportsInt = -1000001, color_map: str = 'gray') -> None:
         """
         Save a 2D slice as a PNG image, color_map can be 'gray' or 'RGB'
         """
@@ -871,10 +865,6 @@ class VxlImgU8:
     def PaintBefore(self, shape: shape) -> None:
         """
         Paint before the shape (plane...)
-        """
-    def PointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
-        """
-        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def XOR(self, other: VxlImgU8) -> None:
         """
@@ -966,8 +956,10 @@ class VxlImgU8:
         ...
     def growingThreshold(self, startMin: typing.SupportsInt, startMax: typing.SupportsInt, finalMin: typing.SupportsInt, finalMax: typing.SupportsInt, iterations: typing.SupportsInt = 4) -> None:
         ...
-    def keepLargest0(self) -> None:
-        ...
+    def keepLargest(self, min: typing.SupportsInt, max: typing.SupportsInt) -> None:
+        """
+        Keep largest singly-connected region with values in [min, max].
+        """
     def mapFrom(self, sourceImage: VxlImgU8, vmin: typing.SupportsInt, vmax: typing.SupportsInt, scale: typing.SupportsFloat, shift: typing.SupportsFloat) -> None:
         """
         Map values from another image.
@@ -999,6 +991,10 @@ class VxlImgU8:
     def plotAll(self, name: str = 'pltAll', minv: typing.SupportsInt = 0, maxv: typing.SupportsInt = -1000001, sliceIndex: typing.SupportsInt = -1000000, nBins: typing.SupportsInt = 128, normalAxis: str = 'xyz', grey: bool = True, color: bool = True, histogram: bool = True, zProfile: bool = True, alphaImage: VxlImgU8 = None, alphaMin: typing.SupportsInt = 0, alphaMax: typing.SupportsInt = -1000001) -> bool:
         """
         Plot all visualizations (Histogram, ZProfile, Slices) with various options, hackish for debugging, all args except are optional
+        """
+    def pointMedian032(self, nAdj0: typing.SupportsInt, nAdj1: typing.SupportsInt, lbl0: typing.SupportsInt, lbl1: typing.SupportsInt) -> None:
+        """
+        Set voxel value to lbl0/1 if it has more than nAdj0/1 neighbours with value lbl0/1, in its 6+26 nearest voxels
         """
     def printInfo(self) -> None:
         ...
@@ -1072,11 +1068,7 @@ class VxlImgU8:
         """
         Shrink the image boundaries, decreasing its size by the given num_layers in all directions
         """
-    def sliceFromPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt) -> None:
-        """
-        Read a slice from a Png image
-        """
-    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt, val_min: typing.SupportsInt, val_max: typing.SupportsInt, color_map: str = 'gray') -> None:
+    def sliceToPng(self, normalAxis: str, filename: str, sliceIndex: typing.SupportsInt = -1000000, val_min: typing.SupportsInt = 0, val_max: typing.SupportsInt = -1000001, color_map: str = 'gray') -> None:
         """
         Save a 2D slice as a PNG image, color_map can be 'gray' or 'RGB'
         """
