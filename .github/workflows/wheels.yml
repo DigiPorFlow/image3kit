@@ -32,7 +32,7 @@ jobs:
     - name: Check metadata
       run: pipx run twine check dist/*
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: cibw-sdist
         path: dist/*.tar.gz
@@ -78,7 +78,7 @@ jobs:
         }
       shell: pwsh
 
-    - uses: pypa/cibuildwheel@v3.3
+    - uses: pypa/cibuildwheel@v3.4
       env:
         CIBW_ENABLE: cpython-prerelease
         CIBW_SKIP: "cp39-win_arm64 cp310-win_arm64 cp311-win_arm64 cp39-win32 cp310-win32 cp311-win32 cp312-win32"
@@ -91,7 +91,7 @@ jobs:
       run: git diff --exit-code
       shell: bash
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: cibw-wheels-${{ matrix.os }}
         path: wheelhouse/*.whl
@@ -112,14 +112,14 @@ jobs:
       with:
         python-version: "3.x"
 
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         pattern: cibw-*
         merge-multiple: true
         path: dist
 
     - name: Generate artifact attestation for sdist and wheels
-      uses: actions/attest-build-provenance@v3
+      uses: actions/attest-build-provenance@v4
       with:
         subject-path: "dist/*"
 
