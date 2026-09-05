@@ -47,16 +47,29 @@ def test_voxcylinder_z():
 
 def test_voxcylinder_noisy():
     img = ik.VxlImgU8((20, 20, 20), 1)
-    img.paint(ik.cylinder((10, 10, 0), (10, 10, 20), 5, 0))
+    img.paint(ik.cylinder((10, 10, 0), (10, 10, 20), 8, 0))
     img.spacing = ik.dbl3(1e-6, 1e-6, 1e-6)
 
-    # In VxlPro, addSurfNoise 1 1 13 used mask 1<<2 = 4
-    img.add_surf_noise(4, 4, 13)
-    img.add_surf_noise(4, 4, 3)
-
-    expected_porosity = math.pi * 5 * 5 / (20 * 20)
+    expected_porosity = math.pi * 8 * 8 / (20 * 20)
     actual_porosity = np.mean(img.data == 0)
-    assert abs(actual_porosity - expected_porosity) < 0.1 * expected_porosity
+    assert abs(actual_porosity - expected_porosity) < 0.05 * expected_porosity
+
+    before = img.data.copy()
+
+    # In VxlPro, addSurfNoise 1 1 13 used mask 1<<2 = 4
+    img.add_surf_noise(rand_mask1=4, rand_mask2=4, threshold=13, seed=1)
+    img.add_surf_noise(rand_mask1=4, rand_mask2=4, threshold=3, seed=2)
+
+    expected_porosity = math.pi * 8 * 8 / (20 * 20)
+    noisy_porosity = float(np.mean(img.data == 0))
+    assert abs(noisy_porosity - expected_porosity) < 0.15 * expected_porosity
+
+    # The operation should modify the image, almost certainly!
+    assert not np.array_equal(img.data, before)
+
+    # It must preserve the image shape and valid uint8 data.
+    assert img.shape == (20, 20, 20)
+    assert img.data.dtype == np.uint8
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         slice_path = str(Path(tmp_dir) / "ZcylRough13x2.png")

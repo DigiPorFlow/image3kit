@@ -82,8 +82,8 @@ class VxlImgF32(VoxelImagesBase):
     def __sub__(self, arg0: VxlImgF32) -> VxlImgF32: ...
     def add_surf_noise(
         self,
-        mask1: typing.SupportsInt | typing.SupportsIndex,
-        mask2: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask1: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask2: typing.SupportsInt | typing.SupportsIndex,
         threshold: typing.SupportsInt | typing.SupportsIndex,
         seed: typing.SupportsInt | typing.SupportsIndex = -1,
     ) -> None:
@@ -635,8 +635,8 @@ class VxlImgI32(VoxelImagesBase):
     def __sub__(self, arg0: VxlImgI32) -> VxlImgI32: ...
     def add_surf_noise(
         self,
-        mask1: typing.SupportsInt | typing.SupportsIndex,
-        mask2: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask1: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask2: typing.SupportsInt | typing.SupportsIndex,
         threshold: typing.SupportsInt | typing.SupportsIndex,
         seed: typing.SupportsInt | typing.SupportsIndex = -1,
     ) -> None:
@@ -1188,8 +1188,8 @@ class VxlImgU16(VoxelImagesBase):
     def __sub__(self, arg0: VxlImgU16) -> VxlImgU16: ...
     def add_surf_noise(
         self,
-        mask1: typing.SupportsInt | typing.SupportsIndex,
-        mask2: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask1: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask2: typing.SupportsInt | typing.SupportsIndex,
         threshold: typing.SupportsInt | typing.SupportsIndex,
         seed: typing.SupportsInt | typing.SupportsIndex = -1,
     ) -> None:
@@ -1805,8 +1805,8 @@ class VxlImgU8(VoxelImagesBase):
     def __sub__(self, arg0: VxlImgU8) -> VxlImgU8: ...
     def add_surf_noise(
         self,
-        mask1: typing.SupportsInt | typing.SupportsIndex,
-        mask2: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask1: typing.SupportsInt | typing.SupportsIndex,
+        rand_mask2: typing.SupportsInt | typing.SupportsIndex,
         threshold: typing.SupportsInt | typing.SupportsIndex,
         seed: typing.SupportsInt | typing.SupportsIndex = -1,
     ) -> None:
@@ -2435,6 +2435,22 @@ class sphere(shape):
     ) -> None: ...
 
 class triangular(shape):
+    @typing.overload
+    def __init__(
+        self,
+        po: tuple,
+        L1: typing.SupportsFloat | typing.SupportsIndex,
+        L2: typing.SupportsFloat | typing.SupportsIndex,
+        h: typing.SupportsFloat | typing.SupportsIndex,
+        Lt: typing.SupportsFloat | typing.SupportsIndex,
+        c_rp_rt: typing.SupportsFloat | typing.SupportsIndex,
+        c_side_mid: typing.SupportsFloat | typing.SupportsIndex = 1.0,
+        val: typing.SupportsInt | typing.SupportsIndex = 0,
+    ) -> None:
+        """
+        po: apex point, L1/L2: half-widths, h: height, Lt: throat length, c_rp_rt: Rp/Rt_mid contraction ratio, c_side_mid: Rt_side/Rt_mid, val: paint value
+        """
+    @typing.overload
     def __init__(
         self,
         po: tuple,
@@ -2443,10 +2459,10 @@ class triangular(shape):
         h: typing.SupportsFloat | typing.SupportsIndex,
         Lt: typing.SupportsFloat | typing.SupportsIndex,
         ch: typing.SupportsFloat | typing.SupportsIndex,
-        val: typing.SupportsInt | typing.SupportsIndex,
+        val: typing.SupportsInt | typing.SupportsIndex = 0,
     ) -> None:
         """
-        po: apex point, L1/L2: half-widths, h: height, Lt: throat length, ch: contraction ratio, val: paint value
+        Backward-compatible constructor: po, L1, L2, h, Lt, ch, val
         """
 
 @typing.overload
